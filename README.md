@@ -4,14 +4,14 @@
 <p align="center">
   <img src="https://img.shields.io/badge/JavaScript-Vanilla-F7DF1E?style=for-the-badge&logo=javascript" alt="JavaScript"/>
   <img src="https://img.shields.io/badge/build-Vite-646CFF?style=for-the-badge&logo=vite" alt="Vite"/>
-  <img src="https://img.shields.io/badge/style-Glassmorphism-8B5CF6?style=for-the-badge&logo=css3" alt="CSS"/>
+  <img src="https://img.shields.io/badge/backend-Firebase-FFCA28?style=for-the-badge&logo=firebase" alt="Firebase"/>
 </p>
 
 ---
 
 ## 📖 About The Project
 
-Scheduling a meeting across a group is a chore — **TimeSync** makes it visual. Each person marks the hours they're available on a simple 7-day × 24-hour grid, and the app overlays everyone's input into a heatmap so the best slots jump right out. No more endless "does Tuesday work for you?" threads.
+Scheduling a meeting across a group is a chore — **TimeSync** makes it visual. Each person marks the hours they're available on a simple day × hour grid (or just ticks whole dates in day-poll mode), and the app overlays everyone's input into a heatmap so the best slots jump right out. No more endless "does Tuesday work for you?" threads.
 
 Built with vanilla JavaScript (ES modules) and Vite, backed by Firebase Realtime Database for live shared syncs.
 
@@ -24,9 +24,11 @@ Built with vanilla JavaScript (ES modules) and Vite, backed by Firebase Realtime
 | 👥 | **Per-Person Grids** | Each participant joins by name via a shared link and marks their own hours. |
 | 🖱️ | **Drag-to-Select** | Click and drag across the grid to block out availability fast. |
 | 🔥 | **Group Heatmap** | A live overlay showing cumulative availability across everyone. |
-| 🏆 | **Smart Recommendations** | Top 3 meeting slots ranked by how many people can make it. |
+| 🏆 | **Smart Recommendations** | Top 3 meeting slots ranked by how many people can make it — "best effort" or "everyone free" mode. |
 | ⏱️ | **Adjustable Duration** | Pick a 1–8 hour meeting length to tune the recommendations. |
-| 🗓️ | **Two Modes** | Weekly recurring (Mon–Sun) or one calendar month, chosen at creation — weekly syncs also choose week-grid or day-by-day layout. |
+| 🗓️ | **Two Modes** | Weekly recurring (Mon–Sun) or specific calendar months (pick any, gaps allowed) — weekly syncs also choose week-grid or day-by-day layout. |
+| ✅ | **Day Polls** | Month syncs can skip times entirely: participants just tick the dates that work (Doodle-style). |
+| ✏️ | **Editable Settings** | Name, visible hours, and grid style can be changed after creation — nobody's marks are lost. |
 
 ---
 
@@ -53,8 +55,8 @@ Built with vanilla JavaScript (ES modules) and Vite, backed by Firebase Realtime
 |:---------|:-----------|:--------|
 | **Frontend** | Vanilla JavaScript (ES modules) | UI logic, no framework |
 | **Build** | Vite | Dev server + production bundling |
-| **Styling** | Custom CSS | Glassmorphism, dark theme, animations |
-| **Architecture** | State-driven UI | Central `State` with observer callbacks |
+| **Styling** | Custom CSS | Light, minimal utility-tool look |
+| **Backend** | Firebase Realtime Database | Live shared syncs, no server code |
 
 ---
 
@@ -67,12 +69,12 @@ timesync/
 ├── style.css               # Utility-tool visual system
 ├── src/
 │   ├── logic.js            # Pure: grid codec, density, recommendations
-│   ├── db.js               # Firebase RTDB (createSync/subscribeSync/saveGrid)
+│   ├── db.js               # Firebase RTDB (create/subscribe/update/saveGrid)
 │   ├── views/
 │   │   ├── home.js         # Sync creation form
-│   │   └── sync.js         # Join gate, grids, heatmap, recommendations
+│   │   └── sync.js         # Join gate, grids, heatmap, settings, recommendations
 │   └── components/
-│       └── grid.js         # Grid renderer (week/day) + pointer painting
+│       └── grid.js         # Grid renderer (week/day), mini calendars, day picker
 └── test/
     └── logic.test.js       # node assert tests
 ```
@@ -127,7 +129,7 @@ TimeSync stores syncs in a Firebase Realtime Database.
            ".write": true,
            "name": { ".validate": "newData.isString() && newData.val().length <= 100" },
            "people": {
-             "$person": { ".validate": "newData.isString() && newData.val().length <= 800" }
+             "$person": { ".validate": "newData.isString() && newData.val().length <= 10000" }
            }
          }
        }

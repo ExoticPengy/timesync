@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {
   emptyGrid, encodeGrid, decodeGrid, sanitizeName,
-  heatDensity, topWindows, dayLabels, daysInMonth,
+  heatDensity, topWindows, dayLabels, daysInMonth, monthsOf,
 } from '../src/logic.js';
 
 // encode/decode round-trip
@@ -44,12 +44,23 @@ assert.deepEqual(topWindows(heatDensity([late]), 2), []);
 assert.deepEqual(dayLabels('week', null),
   ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']);
 
-// dayLabels: month mode, one label per day of the given "YYYY-MM"
-const monthLabels = dayLabels('month', '2026-07');
+// dayLabels: month mode, one label per day across the given months
+const monthLabels = dayLabels('month', ['2026-07']);
 assert.equal(monthLabels.length, 31);
 assert.match(monthLabels[0], /Wed/);   // 2026-07-01 is a Wednesday
 assert.match(monthLabels[0], /1/);
 assert.match(monthLabels[30], /31/);
+
+// dayLabels: several months concatenate, labels gain the month name
+const multiLabels = dayLabels('month', ['2026-08', '2026-12']);
+assert.equal(multiLabels.length, 31 + 31);
+assert.equal(multiLabels[0], 'Sat Aug 1');
+assert.equal(multiLabels[31], 'Tue Dec 1');
+
+// monthsOf: normalizes legacy single-month syncs
+assert.deepEqual(monthsOf({ month: '2026-07' }), ['2026-07']);
+assert.deepEqual(monthsOf({ months: ['2026-07', '2026-09'] }), ['2026-07', '2026-09']);
+assert.deepEqual(monthsOf({}), []);
 
 // emptyGrid(days) — arbitrary day count, 24 wide
 const g31 = emptyGrid(31);
