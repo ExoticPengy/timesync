@@ -176,6 +176,19 @@ style.css             # new visual system
 .env.example
 ```
 
+## Addendum (2026-07-14, user revision): month mode replaces 7-day date mode
+
+- Modes are now **Weekly** (Mon–Sun, unchanged) and **Specific month** (one
+  full calendar month, 28–31 days)
+- Month mode always uses the day-by-day arrangement (day tabs); the grid-style
+  choice applies to weekly syncs only and is hidden when month is selected
+- Creation form uses native `<input type="month">`; config stores
+  `month: "YYYY-MM"` instead of `startDate`
+- Grid data becomes N×24 where N = days in the month (weekly stays 7×24);
+  encoding unchanged in shape (N pipe-joined 24-char '0'/'1' strings);
+  `decodeGrid` validates against the expected day count
+- Day labels in month mode: "Mon 1" … through end of month
+
 ## Testing
 
 - Node assert script (`test/logic.test.js`, plain node, no framework):
