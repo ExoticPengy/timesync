@@ -87,6 +87,36 @@ input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1
   cursor: pointer;
 }
 .seg button.on { background: var(--text); color: #fff; }
+.day-tabs { display: flex; margin: 16px 0; }
+.day-tabs button { flex: 1; padding: 7px 4px; text-align: center; }
+
+/* Seg buttons with preview thumbnails */
+.seg-preview button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+  padding: 10px 12px;
+}
+.seg-preview svg { width: 28px; height: 20px; fill: currentColor; }
+.seg-preview small { font-size: 11px; font-weight: 400; opacity: 0.7; }
+.seg.seg-preview { display: flex; }
+
+/* Month multi-select */
+.month-pick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.month-pick button {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 4px;
+  background: var(--card);
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.month-pick button.on { background: var(--text); border-color: var(--text); color: #fff; }
 
 /* Chips (joined people) */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -156,8 +186,11 @@ input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 2px;
-  margin: 8px 0;
+  margin: 16px auto;
   max-width: 320px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 .cal-wd {
   font-size: 12px;
@@ -178,6 +211,18 @@ input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1
 }
 .cal button:hover { border-color: var(--line); }
 .cal button.on { background: var(--text); color: #fff; }
+
+/* Day-only picker (reuses .cal layout) */
+.cal button.day-pick { border-color: var(--line); }
+.cal button.lit { color: #fff; }
+.day-pick-count { font-size: 10px; opacity: 0.8; }
+.cal-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 12px;
+}
 
 /* Recommendations */
 .rec-item {

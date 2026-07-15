@@ -50,17 +50,28 @@ export function daysInMonth(ym) {
   return new Date(y, m, 0).getDate();
 }
 
-export function dayLabels(mode, ref) {
+export function dayLabels(mode, months) {
   if (mode === 'week') return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  // mode === 'month': ref is "YYYY-MM". Parse as LOCAL midnight — never
-  // `new Date(string)`, which parses UTC and shifts a day back in
-  // negative-offset timezones.
-  const [y, m] = ref.split('-').map(Number);
-  const total = daysInMonth(ref);
+  // mode === 'month': months is ["YYYY-MM", ...]. Parse as LOCAL midnight —
+  // never `new Date(string)`, which parses UTC and shifts a day back in
+  // negative-offset timezones. Month shown only when spanning several months.
+  const multi = months.length > 1;
   const out = [];
-  for (let d = 1; d <= total; d++) {
-    const curr = new Date(y, m - 1, d);
-    out.push(`${curr.toLocaleDateString('en-US', { weekday: 'short' })} ${d}`);
+  for (const ym of months) {
+    const [y, m] = ym.split('-').map(Number);
+    const total = daysInMonth(ym);
+    for (let d = 1; d <= total; d++) {
+      const curr = new Date(y, m - 1, d);
+      const wd = curr.toLocaleDateString('en-US', { weekday: 'short' });
+      out.push(multi
+        ? `${wd} ${curr.toLocaleDateString('en-US', { month: 'short' })} ${d}`
+        : `${wd} ${d}`);
+    }
   }
   return out;
+}
+
+// Sorted list of months a sync spans; normalizes legacy single-month syncs.
+export function monthsOf(sync) {
+  return sync.months || (sync.month ? [sync.month] : []);
 }

@@ -1,7 +1,7 @@
-// src/db.js — all Firebase touchpoints. Three functions + a configured flag.
+// src/db.js — all Firebase touchpoints. Four functions + a configured flag.
 import { initializeApp } from 'firebase/app';
 import {
-  getDatabase, ref, push, set, onValue, serverTimestamp,
+  getDatabase, ref, push, set, update, onValue, serverTimestamp,
 } from 'firebase/database';
 
 const env = import.meta.env;
@@ -31,6 +31,10 @@ export function subscribeSync(id, cb) {
     snap => cb(snap.val()),
     () => cb(null), // permission/network error → treat as not found
   );
+}
+
+export function updateSync(id, fields) {
+  return update(ref(db, `syncs/${id}`), fields);
 }
 
 export function saveGrid(id, name, gridStr) {
